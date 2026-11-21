@@ -4,7 +4,8 @@ Approach
 --------
 A scikit-learn pipeline (StandardScaler + LogisticRegression) is trained on
 historical invoices with status "Paid" and a non-null paid_date. Each invoice
-is labelled late (1) if paid_date > due_date, otherwise on time (0). Features
+is labelled late (1) only if paid more than GRACE_DAYS (5) days after due_date,
+otherwise on time (0). Features
 are FEATURE_COLUMNS: the client's avg_days_late, amount_inr, and
 payment_term_days (due_date - issue_date).
 
@@ -63,6 +64,9 @@ LATE_MEDIUM_THRESHOLD_PCT = 40
 OVERDUE_FORCE_HIGH_DAYS = 30
 LATE_AVG_DAYS_REASON = 7
 HIGH_VALUE_MULTIPLIER = 2
+# Freelance grace period: only payments more than this many days late count
+# as materially late (label 1) when training the model.
+GRACE_DAYS = 5
 
 
 @dataclass
@@ -105,7 +109,8 @@ def train_late_payment_model(invoices_df: pd.DataFrame, clients_df: pd.DataFrame
     """
     feats = _build_features(invoices_df, clients_df)
     paid = feats.loc[(feats["status"] == "Paid") & feats["paid_date"].notna()].copy()
-    paid.loc[:, "label"] = (paid["paid_date"] > paid["due_date"]).astype(int)
+    days_late = (paid["paid_date"] - paid["due_date"]).dt.days
+    paid.loc[:, "label"] = (days_late > GRACE_DAYS).astype(int)
 
     n_rows = len(paid)
     base_rate = float(paid["label"].mean()) if n_rows > 0 else 0.5

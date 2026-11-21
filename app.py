@@ -6,6 +6,7 @@ reminders and seed_data; this file only wires them to the UI.
 """
 
 from datetime import date
+from urllib.parse import quote
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -242,6 +243,32 @@ with tab_forecast:
     )
     st.plotly_chart(fig, width="stretch")
 
+    with st.expander("View Upcoming Fixed Bills"):
+        try:
+            upcoming_bills = load_bills()
+        except Exception:
+            upcoming_bills = None
+        if upcoming_bills is None or upcoming_bills.empty:
+            st.info("No fixed bills found (bills.csv is missing or empty).")
+        else:
+            bills_view = upcoming_bills.copy()
+            bills_view["due_date"] = pd.to_datetime(bills_view["due_date"], errors="coerce")
+            window_end = pd.Timestamp(TODAY) + pd.Timedelta(days=horizon - 1)
+            in_horizon = (bills_view["due_date"] >= pd.Timestamp(TODAY)) & (
+                bills_view["due_date"] <= window_end
+            )
+            bills_view = bills_view.loc[in_horizon].sort_values("due_date")
+            if bills_view.empty:
+                st.info(f"No fixed bills due in the next {horizon} days.")
+            else:
+                bills_table = pd.DataFrame({
+                    "Date": bills_view["due_date"].dt.strftime("%d %b %Y"),
+                    "Category": bills_view["category"],
+                    "Vendor": bills_view["vendor"],
+                    "Amount (₹)": bills_view["amount_inr"].map(lambda v: f"₹{float(v):,.0f}"),
+                })
+                st.dataframe(bills_table, width="stretch", hide_index=True)
+
     if wi_dip is None:
         st.success("No dip below the safety buffer or ₹0 over this horizon (What-If).")
     else:
@@ -353,6 +380,25 @@ with tab_followup:
                 contact_name=contact or None,
             )
             st.code(message, language=None)
+            recipient = ""
+            if "contact_email" in clients.columns:
+                emails = clients.loc[
+                    clients["client_id"] == row["client_id"], "contact_email"
+                ].dropna()
+                if not emails.empty:
+                    recipient = str(emails.iloc[0]).strip()
+            subject = f"Payment reminder: Invoice {row['invoice_id']}"
+            wa_col, mail_col = st.columns(2)
+            wa_col.link_button(
+                "Open in WhatsApp",
+                "https://wa.me/?text=" + quote(message, safe=""),
+            )
+            mail_col.link_button(
+                "Open in Email",
+                "mailto:" + recipient
+                + "?subject=" + quote(subject, safe="")
+                + "&body=" + quote(message, safe=""),
+            )
         except Exception as exc:
             st.error(f"Could not draft the reminder: {exc}")
 
