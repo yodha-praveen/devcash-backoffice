@@ -1,0 +1,9 @@
+client_id,client_name,contact_name,contact_email,client_type,avg_days_late
+CL001,Northwind Labs,Anika Rao,anika.rao@example.com,Startup,2
+CL002,Bluepeak Agency,Rohan Iyer,rohan.iyer@example.com,Agency,5
+CL003,Maple Street Studio,Tara Menon,tara.menon@example.in,Small Business,12
+CL004,Quantum Fox Analytics,Meera Shah,meera.shah@example.in,Startup,0
+CL005,Redwood Media House,Kabir Nair,kabir.nair@example.com,Agency,28
+CL006,Lotus Retail Demo,Sana Qureshi,sana.qureshi@example.in,Small Business,35
+CL007,Orbit Health Tech,Vikram Joshi,vikram.joshi@example.com,Startup,18
+CL008,Greenfield Consultants,Neha Kapoor,neha.kapoor@example.in,Agency,7

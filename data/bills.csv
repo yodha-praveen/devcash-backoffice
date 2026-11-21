@@ -1,0 +1,18 @@
+bill_id,category,vendor,amount_inr,frequency,due_date,auto_pay
+B001,Coworking desk,Demo Coworking Hub,8500,Monthly,2026-12-01,No
+B002,Cloud hosting,Example Cloud Co.,3200,Monthly,2026-12-03,Yes
+B003,Rent (home office),Example Property Management,18000,Monthly,2026-12-05,No
+B004,AI/LLM API subscriptions,Demo AI Platform Inc.,4500,Monthly,2026-12-07,Yes
+B005,Internet,Demo Fibre Net,1199,Monthly,2026-12-10,Yes
+B006,Tax reserve (transfer),Own tax reserve account - transfer,40000,Quarterly,2026-12-15,No
+B007,Coworking desk,Demo Coworking Hub,8500,Monthly,2027-01-01,No
+B008,Cloud hosting,Example Cloud Co.,3200,Monthly,2027-01-03,Yes
+B009,Professional liability insurance,Example Insurance Agency,12000,Yearly,2027-01-05,No
+B010,Rent (home office),Example Property Management,18000,Monthly,2027-01-05,No
+B011,AI/LLM API subscriptions,Demo AI Platform Inc.,4500,Monthly,2027-01-07,Yes
+B012,Internet,Demo Fibre Net,1199,Monthly,2027-01-10,Yes
+B013,Coworking desk,Demo Coworking Hub,8500,Monthly,2027-02-01,No
+B014,Cloud hosting,Example Cloud Co.,3200,Monthly,2027-02-03,Yes
+B015,Rent (home office),Example Property Management,18000,Monthly,2027-02-05,No
+B016,AI/LLM API subscriptions,Demo AI Platform Inc.,4500,Monthly,2027-02-07,Yes
+B017,Internet,Demo Fibre Net,1199,Monthly,2027-02-10,Yes
