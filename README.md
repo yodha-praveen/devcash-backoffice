@@ -6,6 +6,8 @@ DevCash tells a solo freelance developer when cash will run short and which over
 
 **Live Demo:** [https://devcash-backoffice.streamlit.app](https://devcash-backoffice.streamlit.app)
 
+**2-Minute Demo Video:** [Watch Walkthrough](https://drive.google.com/file/d/17woBZ2l-ZvGNrhNknVcpOcObgI12WDZd/view?usp=drive_link)
+
 Note: If the Streamlit Community Cloud app is sleeping, click "Yes, get this app back up!" and wait ~20 seconds.
 
 **Screenshots**
