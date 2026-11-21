@@ -25,6 +25,16 @@ from forecast import build_cash_forecast, generate_actionable_alerts
 from ml_risk import score_unpaid_invoices, train_late_payment_model
 from reminders import draft_bad_day_batch, draft_reminder
 
+
+def _fmt_dates_for_export(df, cols=("issue_date", "due_date", "paid_date")):
+    out = df.copy()
+    for c in cols:
+        if c in out.columns:
+            date_str = pd.to_datetime(out[c], errors="coerce").dt.strftime("%d-%b-%Y")
+            out[c] = date_str.map(lambda s: " " + s if isinstance(s, str) else "")
+    return out
+
+
 st.set_page_config(page_title="DevCash", layout="wide")
 
 TODAY = date.today()
@@ -146,6 +156,17 @@ with tab_cmd:
             "Reason": scored["reason"],
         }
     )
+    export_risk = scored[[c for c in [
+        "invoice_id", "client_name", "amount_inr", "issue_date", "due_date",
+        "days_overdue", "late_probability", "risk_tier"] if c in scored.columns]]
+    st.download_button(
+        label="Export Overdue & Risk Report (CSV)",
+        data=_fmt_dates_for_export(export_risk).to_csv(index=False).encode("utf-8"),
+        file_name=f"devcash_receivables_{date.today().isoformat()}.csv",
+        mime="text/csv",
+        key="dl_overdue_risk",
+    )
+
     st.dataframe(table, width="stretch", hide_index=True)
 
 # ---------------------------------------------------------------- tab 2
@@ -271,6 +292,17 @@ with tab_invoices:
             st.rerun()
 
     st.subheader("Invoices")
+    export_inv = invoices.drop(columns=["client_name"], errors="ignore").merge(
+        clients[["client_id", "client_name"]], on="client_id", how="left"
+    )
+    st.download_button(
+        label="Export All Invoices (CSV)",
+        data=_fmt_dates_for_export(export_inv).to_csv(index=False).encode("utf-8"),
+        file_name=f"devcash_invoices_{date.today().isoformat()}.csv",
+        mime="text/csv",
+        key="dl_all_invoices",
+    )
+
     header = st.columns([1.2, 2.2, 3.2, 1.5, 1.5, 1.2, 1.6])
     for col, label in zip(header, ["Invoice", "Client", "Description", "Amount", "Due", "Status", ""]):
         col.markdown(f"**{label}**")
